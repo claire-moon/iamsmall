@@ -4,10 +4,12 @@
 <meta charset="UTF-8">
 <title>I am small.</title>
 <style>
-  body, html {
-    height: 100%;
-    margin: 0;
-  }
+body, html {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
   body {
     background-color: black;
     color: white;
@@ -17,18 +19,18 @@
     align-items: center;
   }
   #terminal {
-    background-color: black;
-    color: white;
-    font-family: 'Courier New', monospace;
-    padding: 20px;
-    width: 800px;
-    height: 500px;
-    white-space: pre-wrap;
-    overflow-wrap: break-word;
-    resize: none;
-    overflow: hidden;
-    outline: none;
-    border: none;
+  position: absolute; /* Allows you to position it anywhere */
+  top: 0; /* Start from the very top */
+  left: 0; /* Start from the very left */
+  right: 0; /* Stretch to the right */
+  bottom: 0; /* Stretch to the bottom */
+  color: white;
+  font-family: 'Courier New', monospace;
+  white-space: pre-wrap; /* Preserve whitespace and new lines */
+  overflow-wrap: break-word;
+  overflow-y: hidden; /* Hide vertical scrollbar */
+  padding: 20px; /* Adjust this to move the text away from the edges */
+  box-sizing: border-box; /* Include padding in the width/height */
   }
   .cursor {
     background-color: white;
