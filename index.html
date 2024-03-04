@@ -10,86 +10,124 @@ body, html {
   padding: 0;
   overflow: hidden;
 }
-  body {
-    background-color: black;
-    color: white;
-    font-family: 'Courier New', monospace;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  #terminal {
-  position: absolute; /* Allows you to position it anywhere */
-  top: 0; /* Start from the very top */
-  left: 0; /* Start from the very left */
-  right: 0; /* Stretch to the right */
-  bottom: 0; /* Stretch to the bottom */
+body {
+  background-color: black;
   color: white;
   font-family: 'Courier New', monospace;
-  white-space: pre-wrap; /* Preserve whitespace and new lines */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#terminal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  color: white;
+  font-family: 'Courier New', monospace;
+  white-space: pre-wrap;
   overflow-wrap: break-word;
-  overflow-y: hidden; /* Hide vertical scrollbar */
-  padding: 20px; /* Adjust this to move the text away from the edges */
-  box-sizing: border-box; /* Include padding in the width/height */
+  overflow-y: hidden;
+  padding: 20px;
+  box-sizing: border-box;
+}
+.cursor {
+  background-color: white;
+  width: 10px;
+  height: 16px; 
+  display: inline-block;
+  animation: blink-animation 1s steps(2, start) infinite;
+}
+.positive {
+  color: #00fbff;
+  font-weight: bold;
+}
+
+.negative {
+  color: red;
+  font-weight: bold;
+}
+@keyframes blink-animation {
+  to {
+    background: transparent;
   }
-  .cursor {
-    background-color: white;
-    width: 10px;
-    height: 16px; 
-    display: inline-block;
-    animation: blink-animation 1s steps(2, start) infinite;
-  }
-  @keyframes blink-animation {
-    to {
-      background: transparent;
-    }
-  }
+}
 </style>
 </head>
 <body>
 <div id="terminal"><span id="content"></span><div class="cursor"></div></div>
 <script>
-let story = "I am small.\n\n" + 
-"So very, very, very small. Small as the period at the end of this sentence. All of my art is a scream into the void. Who is really listening? Are you listening?\n\n" + 
-"I knew my art was a response to pain, but after a while, I figured out where I went wrong. Art IS pain. I make a mirror of myself and I show it to you, but I cannot see its reflection. What do you see? A vampire? \n\n" + 
+let story = "I am small.\n\n" +
+"So very, very, very small. Small as the period at the end of this sentence. All of my art is a scream into the void. Who is really listening? Are you listening?\n\n" +
+"I knew my art was a response to pain, but after a while, I figured out where I went wrong. Art IS pain. I make a mirror of myself and I show it to you, but I cannot see its reflection. What do you see? A vampire? \n\n" +
 "I lied, I do see something there. \n \n" +
-"My shortcomings. My mistakes. My failures. That's where the pain lies.\n\n" + 
-"I want my scream to be so detailed, hyper-real, a scream so intricate that you immediately understand where it comes from. When I hear it, I hear juvenile banging on a xylophone.\n\n" + 
-"I want to see my reflection through your eyes. I've spent hours pretending to be you, looking at me. I adopt your thoughts, your opinions, your feelings.\n\n" + 
-"I imagine you see something I do not. Maybe it's something wonderful, something pure and true. Maybe you feel an admiration for me? Ahh. That's a lovely thought. I feel so warm just thinking about it.\n\n" + 
-"The only way I ever feel alive is living inside of you.\n\n" + 
-"I think I want to be you.\n\n" + 
-"My motions are stilted. My face is muted. My body is grotesque. All my happiness is faked. The joy of others turns my blood to vapor.\n\n" + 
-"If I wear your face, I can smile in the mirror without forcing my muscles. It looks so real. I cry having your thoughts. They are so beautiful.\n\n" + 
+"My shortcomings. My mistakes. My failures. That's where the pain lies.\n\n" +
+"I want my scream to be so detailed, hyper-real, a scream so intricate that you immediately understand where it comes from. \n\n" +
+"I want to see my reflection through your eyes. I've spent hours pretending to be you, looking at me. I adopt your thoughts, your opinions, your feelings.\n\n" +
+"I imagine you see something I do not. Maybe it's something wonderful, something pure and true. Maybe you feel an admiration for me? Ahh. That's a lovely thought. I feel so warm just thinking about it.\n\n" +
+"The only way I ever feel alive is living inside of you.\n\n" +
+"I think I want to be you.\n\n" +
+"My motions are stilted. My face is muted. My body is grotesque. All my happiness is faked. The joy of others turns my blood to vapor.\n\n" +
+"If I wear your face, I can smile in the mirror without forcing my muscles. It looks so real. I cry having your thoughts. They are so beautiful.\n\n" +
 "I think about me, and I realize you really do love me. You see my soul, and it's so big. So very, very, very big. As big as the sun in our sky. All of my art is beautiful poetry. Everybody wants to listen. My art is a response to light. My art is love.";
-  let index = 0;
-  let deleting = false;
-  const content = document.getElementById('content');
-  const terminal = document.getElementById('terminal');
 
-  function processInput() {
-    if (!deleting && index < story.length) {
-      content.textContent += story.charAt(index++);
-    } else if (index === story.length && !deleting) {
-      deleting = true;
-      setTimeout(deleteText, 5000); 
+// Arrays of negative and positive words
+const negativeWords = ['small', 'scream', 'void', 'pain', 'vampire', 'lied', 'shortcomings', 'mistakes', 'failures', 'stilted', 'muted', 'grotesque', 'faked', 'vapor'];
+const positiveWords = ['wonderful', 'pure', 'true', 'admiration', 'lovely', 'warm', 'alive', 'beautiful', 'love', 'big', 'light'];
+
+function wrapWords(text) {
+  const words = text.split(/\b/);
+  return words.map(word => {
+    const sanitizedWord = word.toLowerCase().replace(/[\W_]/g, '');
+    if (negativeWords.includes(sanitizedWord)) {
+      return `<span class="negative">${word}</span>`;
+    } else if (positiveWords.includes(sanitizedWord)) {
+      return `<span class="positive">${word}</span>`;
     }
+    return word;
+  }).join('');
+}
+
+function processInput() {
+  if (!deleting && index < story.length) {
+    const nextChar = story.charAt(index);
+    content.innerHTML = wrapWords(content.textContent + nextChar);
+    index++;
+    terminal.scrollTop = terminal.scrollHeight;
+  } else if (index === story.length && !deleting) {
+    content.innerHTML = wrapWords(content.textContent);
+    deleting = true;
+    setTimeout(deleteText, 5000); 
   }
+}
 
-  function deleteText() {
-    if (content.textContent.length > 0) {
-      content.textContent = content.textContent.substring(0, content.textContent.length - 1);
-      setTimeout(deleteText, 100); 
-    } else {
-      terminal.style.pointerEvents = 'none';
-    }
+let index = 0;
+let deleting = false;
+const content = document.getElementById('content');
+const terminal = document.getElementById('terminal');
+
+function deleteText() {
+  if (content.textContent.length > 0) {
+    content.textContent = content.textContent.substring(0, content.textContent.length - 1);
+    setTimeout(deleteText, 10); 
+  } else {
+    terminal.style.pointerEvents = 'none';
   }
+}
 
+window.addEventListener('keydown', function (e) {
+  e.preventDefault();
+  processInput();
+});
 
-  window.addEventListener('keydown', function (e) {
-    e.preventDefault();
-    processInput();
-  });
+terminal.addEventListener('wheel', function(e) {
+  e.preventDefault();
+  terminal.scrollTop += e.deltaY;
+});
 </script>
+<audio loop="loop" autoplay="autoplay">
+    <source src="small.mp3">
+</audio>
 </body>
 </html>
